@@ -1,0 +1,23 @@
+# I got this from chatgpt i'll look through it later
+services:
+  server:
+    build: ./server
+    container_name: kahoot-server
+    ports:
+      - "8080:8080"
+    networks:
+      - kahoot-net
+  
+  client:
+    build: ./client
+    container_name: kahoot-client
+    ports:
+      - "80:5173"
+    depends_on:
+      - server
+    networks:
+      - kahoot-net
+
+networks:
+  kahoot-net:
+    driver: bridge
