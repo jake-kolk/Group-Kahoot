@@ -6,6 +6,12 @@ export default defineConfig({
   server: {
     port: 80,
     host: true,
+    proxy: {
+      '/ws/': {
+        target: 'http://localhost:8080',
+        ws: true,
+      },
+    },
   },
   plugins: [react()],
 })
