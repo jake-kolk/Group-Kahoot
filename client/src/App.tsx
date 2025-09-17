@@ -8,7 +8,7 @@ function App() {
   const [log, setLog] = useState<string[]>([]);
 
   useEffect(() => {
-    wsRef.current = new WebSocket(`ws://${window.location.host}/ws`);
+    wsRef.current = new WebSocket(`ws://${window.location.host}/ws/`);
     wsRef.current.onopen = () => addToLog("Connected to Websocket");
     wsRef.current.onmessage = event => {
       addToLog(event.data);
