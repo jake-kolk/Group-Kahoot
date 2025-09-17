@@ -12,7 +12,7 @@ services:
     build: ./client
     container_name: kahoot-client
     ports:
-      - "80:80"
+      - "80:5173"
     depends_on:
       - server
     networks:
