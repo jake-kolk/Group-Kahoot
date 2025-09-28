@@ -1,27 +1,19 @@
-# Stage 1: build
-FROM debian:stable-slim AS builder
+# ---------- Dockerfile ----------
+# Base image
+FROM python:3.11-slim
 
-RUN apt-get update && apt-get install -y \
-    g++ cmake make libboost-all-dev nlohmann-json3-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-COPY . .
-
-# Build the server (use separate build dir)
-RUN mkdir build && cd build && cmake .. && make -j$(nproc)
-
-# Stage 2: runtime
-FROM debian:stable-slim
+# Set working directory
 WORKDIR /app
 
-# Install runtime dependencies (Boost libs etc.)
-RUN apt-get update && apt-get install -y \
-    libboost-system-dev libboost-thread-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Copy only requirements first for layer caching
+COPY requirements.txt .
 
-# Copy built binary
-COPY --from=builder /app/build/kahoot_server /app/kahoot_server
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8080
-CMD ["./kahoot_server"]
+# We DO NOT copy the source code here.
+# It will be mounted from the host when running the container.
+
+# Default command: run your server script
+CMD ["python", "kahoot_server.py"]
+# --------------------------------
