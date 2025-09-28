@@ -19,17 +19,17 @@ You can run this through docker or manually:
 #### Backend
 #### First cd to server directory
 Should be something like
-`cd <path to server>/server`
+`cd <path to server>/server`  
 #### Build the image
-`docker build -t kahoot-server .`
+`docker build -t kahoot-server .`  
 
 #### Run the container
-`docker run -p 8080:8080 kahoot-server`
+`docker run -p 8080:8080 kahoot-server`  
 
-#### When you make changes
-1. Stop the container
-2, Run `docker run -p 8080:8080 kahoot-server`
-This will hot reload the code
+#### When you make changes  
+1. Stop the container  
+2, Run `docker run -p 8080:8080 kahoot-server`  
+This will hot reload the code  
 
 ## Contributing
-- Make sure you only push working code to main
+- Make sure you only push working code to main  
