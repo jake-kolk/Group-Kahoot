@@ -17,12 +17,19 @@ You can run this through docker or manually:
 5. `npm install`
 6. `npm run dev`
 #### Backend
-I would recommend still using docker for backend, as C++ doesn't benefit from live updating like js does.
-1. Install [docker](https://www.docker.com/).
-2. Open terminal in root
-3. `cd server`
-4. `docker build -t kahoot-server .`
-5. `docker run -it --rm -p 8080:8080 kahoot-server`
+# First cd to server directory
+Should be something like
+`cd <path to server>/server`
+# Build the image
+`docker build -t kahoot-server .`
+
+# Run the container
+`docker run -p 8080:8080 kahoot-server`
+
+# When you make changes
+1. Stop the container
+2, Run `docker run -p 8080:8080 kahoot-server`
+This will hot reload the code
 
 ## Contributing
 - Make sure you only push working code to main
