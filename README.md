@@ -17,16 +17,16 @@ You can run this through docker or manually:
 5. `npm install`
 6. `npm run dev`
 #### Backend
-# First cd to server directory
+#### First cd to server directory
 Should be something like
 `cd <path to server>/server`
-# Build the image
+#### Build the image
 `docker build -t kahoot-server .`
 
-# Run the container
+#### Run the container
 `docker run -p 8080:8080 kahoot-server`
 
-# When you make changes
+#### When you make changes
 1. Stop the container
 2, Run `docker run -p 8080:8080 kahoot-server`
 This will hot reload the code
