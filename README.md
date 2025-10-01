@@ -21,14 +21,14 @@ You can run this through docker or manually:
 Should be something like
 `cd <path to server>/server`  
 #### Build the image
-`docker build -t kahoot-server .`  
+`docker run -it --rm -v ${PWD}:/app -w /app kahoot-server`  
 
 #### Run the container
 `docker run -p 8080:8080 kahoot-server`  
 
 #### When you make changes  
 1. Stop the container  
-2, Run `docker run -p 8080:8080 kahoot-server`  
+2, Run `docker run -it --rm -v ${PWD}:/app -w /app kahoot-server`  
 This will hot reload the code  
 
 ## Contributing
