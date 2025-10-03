@@ -1,0 +1,3 @@
+django-mongodb-backend
+sqlmodel
+dotenv
