@@ -7,6 +7,7 @@ function App() {
   const [name, setName] = useState<string>('');
   const [log, setLog] = useState<string[]>([]);
 
+  // set up websocket (runs once)
   useEffect(() => {
     wsRef.current = new WebSocket(`ws://${window.location.host}/ws/`);
     wsRef.current.onopen = () => addToLog("Connected to Websocket");
@@ -18,10 +19,18 @@ function App() {
     return () => wsRef.current?.close();
   }, []);
 
+  /**
+   * Adds a message to the log!
+   * @param msg 
+   */
   const addToLog = (msg: string) => {
     setLog(prev => [...prev, msg]);
   }
 
+  /**
+   * Attempts to join a room on the server. It is async and doesn't confirm if the server recieved it
+   * @returns 
+   */
   const handleJoin = () => {
     if (!name) return;
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {

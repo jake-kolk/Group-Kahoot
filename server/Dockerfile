@@ -14,6 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # We DO NOT copy the source code here.
 # It will be mounted from the host when running the container.
 
+EXPOSE 8080
+
 # Default command: run your server script
 CMD ["python", "kahoot_server.py"]
 # --------------------------------

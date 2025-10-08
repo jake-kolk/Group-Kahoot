@@ -11,7 +11,7 @@ You can run this through docker or manually:
 
 ### Manual Run (Recommended for active development)
 #### Frontend
-1. Install [node.js](https://nodejs.com)
+1. Install [node.js](https://nodejs.org/)
 3. open terminal in root
 4. `cd client`
 5. `npm install`
@@ -21,10 +21,10 @@ You can run this through docker or manually:
 Should be something like
 `cd <path to server>/server`  
 #### Build the image
-`docker run -it --rm -p 8080:8080 -v ${PWD}:/app -w /app kahoot-server`  
+`docker build -t kahoot-server .`
 
 #### Run the container
-`docker run -p 8080:8080 kahoot-server`  
+`docker run -it --rm -p 8080:8080 -v ${PWD}:/app -w /app kahoot-server`  
 
 #### When you make changes  
 1. Stop the container  
