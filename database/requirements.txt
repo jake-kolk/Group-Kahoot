@@ -1,0 +1,7 @@
+django-mongodb-backend
+sqlmodel
+dotenv
+fastapi
+jwt
+passlib
+uvicorn
