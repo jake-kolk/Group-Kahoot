@@ -4,14 +4,14 @@ The types might be called something different!
 
 ## Client sends
 - player_join: joins with a name and code
-    - `{type: player_join, name: (string), room: (string)}`
+    - `{type: player_join, room: (string), name: (string)}`
 - player_leave: Leaves using their id now.
     - `{type: player_leave, id: (int)}`
 - answer_question
     - `{type: answer_question, id: (int), answer: (int)}`
 - create_game `LATER`
 - start_game: starts the game
-    - `{type: start_game, name: (string), room: (string)}`
+    - `{type: start_game, room: (string), name: (string)}`
 ## Server sends
 - start_game
 - start_question: sends question to players with a timer to answer
