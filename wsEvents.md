@@ -10,7 +10,8 @@ The types might be called something different!
 - answer_question
     - `{type: answer_question, id: (int), answer: (int)}`
 - create_game `LATER`
-
+- start_game: starts the game
+    - `{type: start_game, name: (string), room: (string)}`
 ## Server sends
 - start_game
 - start_question: sends question to players with a timer to answer
