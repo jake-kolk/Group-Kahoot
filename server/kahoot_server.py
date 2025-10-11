@@ -38,6 +38,7 @@ class GameRoom:
         self.current_question_id = -1
         self.answers_received = {}
         self.timer_task = None
+        self.gameStarted = False
 
     async def broadcast(self, j):
         for p in self.players.values():
@@ -60,8 +61,22 @@ class GameRoom:
         pid = s.player_id
         if pid > 0 and pid in self.players:
             del self.players[pid]
+            self.next_player_id -= 1
             await self.broadcast({"type":"player_left","id":pid})
+            if len(self.players) == 0:
+                room.end_game(s)
 
+    async def end_game(self, s: Session):
+        self.gameStarted = False
+
+    async def start_game(self, s: Session):
+        self.current_question_id = 0
+        self.gameStarted = True
+        #Look in data base and get question 1, for now ill supply dummy question info
+        q = {"text":"What's 2+2?","choices":["1","3","4","5"]}
+        await room.start_question(self.current_question_id, q, 15000)
+
+    
     async def start_question(self, question_id, question_payload, duration_ms):
         msg = dict(question_payload)
         msg["type"] = "question"
@@ -112,6 +127,19 @@ class GameRoom:
         for pr in self.players.values():
             lb["top"].append({"id":pr.id,"name":pr.name,"points":pr.points})
         await self.broadcast(lb)
+        ##question ended and leaderboards sent
+        self.current_question_id += 1
+        
+        asyncio.create_task(self._start_question_after(10)) #start question after 10s
+        
+    async def _start_question_after(self, seconds):
+        try:
+            await asyncio.sleep(seconds)
+            #Look in data base and get question 1, for now ill supply dummy question info
+            q = {"text":"What's 2+2?","choices":["1","3","4","5"]}
+            await room.start_question(self.current_question_id, q, 15000)
+        except asyncio.CancelledError:
+            pass
 
 room = GameRoom("ROOM!")
 
@@ -125,23 +153,28 @@ async def handler(websocket):
                 print("json parse error", raw)
                 continue
             t = j.get("type","")
-            if t == "join":
+            if t == "join":                                                 #JOIN HANDLER
                 name = j.get("name","guest")
                 pid = await room.add_player(s, name)
                 await s.send({"type":"joined","id":pid,"room":room.code})
-            elif t == "answer":
+            elif t == "answer":                                             ####ANSWER HANDLER
                 qid = j.get("question_id",-1)
                 choice = j.get("choice",-1)
                 time_left = j.get("time_left_ms",0)
                 await room.handle_answer(s.player_id,qid,choice,time_left)
-            elif t == "start_question":
+            elif t == "player_leave":                                       ####LEAVE HANDLER
+                await room.remove_player(s)
+            elif t == "start_question":                                     #START QUESTION HANDLER
+                qid = j.get("question_id",1)
+                q = {"text":"What's 2+2?","choices":["1","3","4","5"]}
+                await room.start_question(qid,q,15000)
+            elif t == "start_game":                                     #START QUESTION HANDLER
                 qid = j.get("question_id",1)
                 q = {"text":"What's 2+2?","choices":["1","3","4","5"]}
                 await room.start_question(qid,q,15000)
     except:
         traceback.print_exc()
-    finally:
-        await room.remove_player(s)
+
 
 import websockets
 
