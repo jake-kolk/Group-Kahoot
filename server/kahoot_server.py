@@ -6,6 +6,13 @@ import asyncio
 import json
 import traceback
 from collections import deque
+import random
+import logging
+
+logging.basicConfig(
+    level=logging.DEBUG,  # or INFO, WARNING, ERROR
+    format="%(asctime)s [%(levelname)s] %(message)s"
+)
 
 class Session:
     """
@@ -64,7 +71,7 @@ class GameRoom:
             self.next_player_id -= 1
             await self.broadcast({"type":"player_left","id":pid})
             if len(self.players) == 0:
-                room.end_game(s)
+                self.end_game(s)
 
     async def end_game(self, s: Session):
         self.gameStarted = False
@@ -74,7 +81,7 @@ class GameRoom:
         self.gameStarted = True
         #Look in data base and get question 1, for now ill supply dummy question info
         q = {"text":"What's 2+2?","choices":["1","3","4","5"]}
-        await room.start_question(self.current_question_id, q, 15000)
+        await self.start_question(self.current_question_id, q, 15000)
 
     
     async def start_question(self, question_id, question_payload, duration_ms):
@@ -137,41 +144,81 @@ class GameRoom:
             await asyncio.sleep(seconds)
             #Look in data base and get question 1, for now ill supply dummy question info
             q = {"text":"What's 2+2?","choices":["1","3","4","5"]}
-            await room.start_question(self.current_question_id, q, 15000)
+            await self.start_question(self.current_question_id, q, 15000)
         except asyncio.CancelledError:
             pass
 
-room = GameRoom("ROOM!")
+
+
+#####GLOBAL ROOM STORAGE (probably want to optimize later)
+
+rooms = dict()
+rooms["100000"] = GameRoom("100000") #this is default for testing
 
 async def handler(websocket):
     s = Session(websocket)
     try:
         async for raw in websocket:
             try:
-                j = json.loads(raw)
+                data = json.loads(raw)
             except:
                 print("json parse error", raw)
                 continue
-            t = j.get("type","")
+            t = data.get("type","")
             if t == "join":                                                 #JOIN HANDLER
-                name = j.get("name","guest")
-                pid = await room.add_player(s, name)
-                await s.send({"type":"joined","id":pid,"room":room.code})
+                name = data.get("name","guest")
+                roomCode = data.get("room")
+                if str(roomCode) not in rooms:
+                    logging.error("ROOM NUM " + str(roomCode) + "NOT FOUND")
+                    continue
+                else:
+                    roomObj = rooms[roomCode]
+                pid = await roomObj.add_player(s, name)
+                await s.send({"type":"joined","id":pid,"room":roomCode})
             elif t == "answer":                                             ####ANSWER HANDLER
-                qid = j.get("question_id",-1)
-                choice = j.get("choice",-1)
-                time_left = j.get("time_left_ms",0)
-                await room.handle_answer(s.player_id,qid,choice,time_left)
+                qid = data.get("question_id",-1)
+                choice = data.get("choice",-1)
+                time_left = data.get("time_left_ms",0)
+                roomCode = data.get("room")
+                if str(roomCode) not in rooms:
+                    logging.error("ROOM NUM " + str(roomCode) + "NOT FOUND")
+                    continue
+                else:
+                    roomObj = rooms[roomCode]
+                await roomObj.handle_answer(s.player_id,qid,choice,time_left)
             elif t == "player_leave":                                       ####LEAVE HANDLER
-                await room.remove_player(s)
+                roomCode = data.get("room")
+                if str(roomCode) not in rooms:
+                    logging.error("ROOM NUM " + str(roomCode) + "NOT FOUND")
+                    continue
+                else:
+                    roomObj = rooms[roomCode]
+                await roomObj.remove_player(s)
             elif t == "start_question":                                     #START QUESTION HANDLER
-                qid = j.get("question_id",1)
+                qid = data.get("question_id",1)
                 q = {"text":"What's 2+2?","choices":["1","3","4","5"]}
-                await room.start_question(qid,q,15000)
-            elif t == "start_game":                                     #START QUESTION HANDLER
-                qid = j.get("question_id",1)
+                roomCode = data.get("room")
+                if str(roomCode) not in rooms:
+                    logging.error("ROOM NUM " + str(roomCode) + "NOT FOUND")
+                    continue
+                else:
+                    roomObj = rooms[roomCode]
+                await roomObj.start_question(qid,q,15000)
+            elif t == "start_game":                                          #START QUESTION HANDLER
+                qid = data.get("question_id",1)
                 q = {"text":"What's 2+2?","choices":["1","3","4","5"]}
-                await room.start_question(qid,q,15000)
+                roomCode = data.get("room")
+                if str(roomCode) not in rooms:
+                    logging.error("ROOM NUM " + roomCode + "NOT FOUND")
+                    continue
+                else:
+                    roomObj = rooms[roomCode]
+                await roomObj.start_question(qid,q,15000)
+            elif  t == "create_room":
+                while roomNum in rooms:
+                    roomNum = random.randint(100000, 999999) #generate new room num if new room num is taken
+
+                 
     except:
         traceback.print_exc()
 
