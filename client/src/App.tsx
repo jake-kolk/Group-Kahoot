@@ -6,19 +6,16 @@ function App() {
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const [name, setName] = useState('')
+  const [roomCode, setRoomCode] = useState('')
   const [log, setLog] = useState<string[]>([])
   const [joined, setJoined] = useState(false)
   const [gameStarted, setGameStarted] = useState(false)
-  const [roomId, setRoomID] = useState('')
-  // Question state
   const [question, setQuestion] = useState('')
   const [answers, setAnswers] = useState<string[]>([])
   const [questionId, setQuestionId] = useState<number | null>(null)
   const [selectedOption, setSelectedOption] = useState<number | null>(null)
   const [duration, setDuration] = useState<number | null>(null)
   const [timeLeftMs, setTimeLeftMs] = useState<number>(0)
-
-  // Control flow
   const [questionEnded, setQuestionEnded] = useState(false)
 
   // WebSocket setup
@@ -35,11 +32,11 @@ function App() {
       const data = JSON.parse(event.data)
       addToLog(`Received: ${event.data}`)
 
-      if (data.type === 'player_leave') {//handler for player leave
-
+      if (data.type === 'player_leave') {
+        // handler for player leave
       }
 
-      if (data.type === 'question') { //handler for question receved
+      if (data.type === 'question') {
         setQuestion(data.text)
         setAnswers(data.choices)
         setQuestionId(data.question_id)
@@ -63,51 +60,55 @@ function App() {
         }, 1000)
       }
 
-      if (data.type === 'question_ended') { //handler for question ended
+      if (data.type === 'question_ended') {
         clearInterval(timerRef.current!)
         setQuestionEnded(true)
       }
 
-      if (data.type === 'leaderboard') { //handler for leader board receved
+      if (data.type === 'leaderboard') {
         addToLog('Leaderboard:')
         data.top.forEach((p: any) => addToLog(`${p.name}: ${p.points} pts`))
       }
     }
-    if (wsRef.current?.readyState != WebSocket.OPEN){
-      addToLog('wsRef.current != webSocket.open. Web socket is actually closed')
+
+    if (wsRef.current?.readyState != WebSocket.OPEN) {
+      addToLog('WebSocket is not open — connection may be closed.')
     }
   }
 
   const addToLog = (msg: string) => setLog((prev) => [...prev, msg])
 
   const handleJoin = () => {
-    if (!name) return
+    if (!name || !roomCode) {
+      addToLog('Please enter both name and room code.')
+      return
+    }
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ type: 'join', room: 'ABCD', name }))
+      wsRef.current.send(JSON.stringify({ type: 'join', room: roomCode, name }))
       setJoined(true)
-      addToLog(`Joined as ${name}`)
+      addToLog(`Joined room ${roomCode} as ${name}`)
+    } else {
+      addToLog('WebSocket connection not ready.')
     }
   }
 
   const handleDisconnect = () => {
     if (wsRef.current) {
-    // Don't close the connection — just notify server and reset UI
-    wsRef.current.send(JSON.stringify({ type: 'player_leave', room: 'ABCD', name }))
-    
-    clearInterval(timerRef.current!)
-    setJoined(false)
-    setGameStarted(false)
-    setQuestion('')
-    setAnswers([])
-    setQuestionEnded(false)
-    setSelectedOption(null)
-    setLog((prev) => [...prev, 'Left Game'])
-  }
+      wsRef.current.send(JSON.stringify({ type: 'player_leave', room: roomCode, name }))
+      clearInterval(timerRef.current!)
+      setJoined(false)
+      setGameStarted(false)
+      setQuestion('')
+      setAnswers([])
+      setQuestionEnded(false)
+      setSelectedOption(null)
+      setLog((prev) => [...prev, 'Left Game'])
+    }
   }
 
   const handleStartGame = () => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ type: 'start_game', room: 'ABCD', name }))
+      wsRef.current.send(JSON.stringify({ type: 'start_game', room: roomCode, name }))
       addToLog(`Game started by ${name}`)
     }
   }
@@ -173,6 +174,15 @@ function App() {
             placeholder="Enter your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            style={{ display: 'block', marginBottom: '0.5rem' }}
+          />
+          {/* ✅ New Room Code Field */}
+          <input
+            id="room"
+            placeholder="Enter room code"
+            value={roomCode}
+            onChange={(e) => setRoomCode(e.target.value)}
+            style={{ display: 'block', marginBottom: '0.5rem' }}
           />
           <button id="join" onClick={handleJoin}>
             Join
@@ -183,7 +193,7 @@ function App() {
       {/* --- LOBBY SCREEN --- */}
       {joined && !gameStarted && (
         <div style={{ marginTop: '1rem' }}>
-          <p>Welcome, {name}!</p>
+          <p>Welcome, {name}! (Room: {roomCode})</p>
           <button onClick={handleStartGame}>Start Game</button>
         </div>
       )}
