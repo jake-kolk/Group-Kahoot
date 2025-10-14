@@ -2,6 +2,7 @@ django-mongodb-backend
 sqlmodel
 dotenv
 fastapi
-jwt
+pyjwt
 passlib
 uvicorn
+python-multipart

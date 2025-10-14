@@ -1,4 +1,4 @@
-from sqlmodel import Field, create_engine, SQLModel, Session, column, JSON, Relationship
+from sqlmodel import Field, create_engine, SQLModel, Session, Column, JSON, Relationship
 from typing import Optional, List
 from dotenv import load_dotenv
 import os
@@ -31,7 +31,7 @@ class QuestionSet(SQLModel, table=True):
 class QuestionBase(SQLModel):
     question_set: int = Relationship(back_populates="questions")
     question_text: str
-    choices: List[str] = Field(sa_column=column(JSON))
+    choices: List[str] = Field(sa_column=Column(JSON))
     correct_answer: str
 
 class Question(QuestionBase, table=True):
@@ -40,7 +40,7 @@ class Question(QuestionBase, table=True):
 
 class QuestionUpdate(QuestionBase):
     question_text: Optional[str] = None
-    choices: Optional[List[str]] = None
+    choices: Optional[List[str]] = Field(sa_column=Column(JSON), default=None)
     correct_answer: Optional[str] = None
 
 
