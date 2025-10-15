@@ -1,24 +1,25 @@
 interface Options {
-    onopen: (e: Event) => void,
-    onclose: (e: Event) => void,
+    onopen?: (e: Event) => void,
+    onclose?: (e: Event) => void,
+    onmessage?: (e: MessageEvent) => void,
+    autoReconnect?: boolean
 }
 
 class WS {
     static webSocket: WebSocket;
     static initialized = false;
-    static listeners = new Map<string, (e: Object) => void>();
+    private static listeners = new Map<string, (e: Object) => void>();
+    private static url: string;
+    private static options: Options
 
     static initialize(url: string, options?: Options) {
         if (WS.initialized) return;
         WS.initialized = true;
 
-        WS.webSocket = new WebSocket(url);
-        console.log("initializing websocket...");
-        WS.webSocket.onopen = options?.onopen ?? (() => console.log("Websocket open!"));
-        WS.webSocket.onclose = options?.onclose ?? (() => console.log("Websocket closed!"));
+        WS.url = url;
+        WS.options = options || {autoReconnect: true}; // default settings
 
-
-        WS.webSocket.onmessage = WS.handleMessage;
+        WS.connect();
     }
 
     /**
@@ -33,13 +34,37 @@ class WS {
             WS.listeners.get(event.type)!(event);
     }
 
+    private static connect() {
+        WS.webSocket = new WebSocket(WS.url);
+        console.log("initializing websocket...");
+        WS.webSocket.onopen = WS.options.onopen ?? (() => console.log("Websocket open!"));
+        WS.webSocket.onclose = (ev: CloseEvent) => {
+            if (WS.options.onclose) WS.options.onclose(ev);
+            else console.warn("Websocket closed!", ev.code, ev.reason);
+            
+            if (WS.options.autoReconnect !== false) {
+                console.log("Attempting to reconnect in 2 seconds.")
+                setTimeout(WS.connect, 2000);
+            }
+        }
+
+        WS.webSocket.onmessage = (event) => {
+            WS.handleMessage(event);
+            if (WS.options?.onmessage) WS.options.onmessage(event);
+        };
+    }
+
     static on(eventName: string, callback: (data: Object) => void) {
         WS.listeners.set(eventName, callback);
     }
 
     static emit(eventName: string, value: Object) {
         WS.webSocket.send(JSON.stringify({type: eventName, ...value})); // TODO: Change from ...value to value after server fixes
-    } 
+    }
+
+    static removeListener(eventName: string) {
+        WS.listeners.delete(eventName);
+    }
 }
 
 export { WS };
