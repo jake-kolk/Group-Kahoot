@@ -1,1 +1,5 @@
 websockets>=11.0
+requests
+fastapi
+uvicorn
+psycopg2-binary

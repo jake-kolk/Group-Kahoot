@@ -1,44 +1,35 @@
-# I got this from chatgpt i'll look through it later
 services:
-  server:
+  kahoot-server:
     build: ./server
-    container_name: kahoot-server
+    command: uvicorn kahoot_server:app --host 0.0.0.0 --port 8080 --reload
+    volumes:
+      - ./server:/app
     ports:
       - "8080:8080"
-    networks:
-      - kahoot-net
-  
-  client:
-    build: ./client
-    container_name: kahoot-client
-    ports:
-      - "80:5173"
-    depends_on:
-      - server
-    networks:
-      - kahoot-net
-
-  postgres:
-    image: postgres
-    restart: always
-    # set shared memory limit when using docker compose
-    shm_size: 128mb
-    # or set shared memory limit when deploy via swarm stack
-    #volumes:
-    #  - type: tmpfs
-    #    target: /dev/shm
-    #    tmpfs:
-    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    working_dir: /app
     environment:
-      POSTGRES_PASSWORD: example
+      - PYTHONPATH=/app
+    depends_on:
+      - kahoot-db
 
-  adminer:
-    image: adminer
-    restart: always
+  kahoot-db:
+    build: ./database
+    command: uvicorn main_rest_api:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./database:/app
     ports:
-      - 8080:8080
+      - "8000:8000"
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
 
-
-networks:
-  kahoot-net:
-    driver: bridge
+  kahoot-client:
+    build: ./client
+    command: npm run dev
+    volumes:
+      - ./client:/app
+    ports:
+      - "5173:5173"
+    working_dir: /app
+    stdin_open: true
+    tty: true
