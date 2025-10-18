@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState} from 'react'
 import './App.css'
 
 function App() {
@@ -126,6 +126,7 @@ function App() {
       wsRef.current.send(
         JSON.stringify({
           type: 'answer',
+          room: roomCode,
           question_id: questionId,
           choice: selectedOption,
           time_left_ms: timeLeftMs,
