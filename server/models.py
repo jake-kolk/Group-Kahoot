@@ -41,7 +41,7 @@ class GameRoom:
         self.timer_task = None
         self.gameStarted = False
         # self.questions = []
-        self.question_answer_window_seconds = 10 # Kinda long if you think of something better please replace
+        self.question_answer_window_seconds = 10 # Name kinda long if you think of something better please replace
         question = {"text": "What's 2+2?", "choices": ["1", "3", "4", "5"]}
         self.questions = [question.copy() for _ in range(10)]
 
@@ -62,21 +62,28 @@ class GameRoom:
         player_id = self.next_player_id
 
         if str(room_code) not in rooms:
+            # No need to send back error here, should have already been sent from handler, this check is bonus safety
             logging.error("ERROR: handler: roomnum " + str(room_code) + "NOT FOUND")
             return
         
         roomObj = rooms[room_code]
-        await session.send({"type":"joined","id":self.next_player_id,"room":room_code}) #tell client they  joined
-    
+        # Tell client they  joined
+        await session.send({"type":"joined","id":self.next_player_id,"room":room_code}) 
+
+        for player in self.players.values():
+            # Tell client of all the other players that already joined
+            await session.send({"type":"player_joined","id":player.id,"name":player.name})
+        
         self.next_player_id += 1
         
-        #init session & player objects
+        # Init session & player objects
         self.players[player_id] = Player(session, name, player_id)
 
         session.player_id = player_id
         session.name = name
 
-        await self.broadcast({"type":"player_joined","id":player_id,"name":name}) #tell all others in room player joined
+        # Tell all others in room player joined
+        await self.broadcast({"type":"player_joined","id":player_id,"name":name})
         return
 
     async def remove_player(self, session: Session, data):
@@ -158,7 +165,7 @@ class GameRoom:
             await asyncio.sleep(seconds)
             await self.end_question()
         except asyncio.CancelledError:
-            pass
+            await self.end_question()
 
 
     async def handle_answer(self, session: Session, data):
@@ -187,7 +194,7 @@ class GameRoom:
                 self.timer_task.cancel()
 
     async def end_question(self,):
-        correct_choice = 3  # for demo
+        correct_choice = 2  # for demo
         answer_choice_counts = [0,0,0,0]
 
         # Tally up who picked what answer
@@ -197,9 +204,9 @@ class GameRoom:
 
         # Evaluate if answer was correct and add points
         for player_id,(choice,time_left_ms) in self.answers_received.items():
-            if choice == correct_choice:
+            if choice == correct_choice: # Choices start at 0, so 0 .. 4 usually
                 base = 1000
-                bonus = max(0, time_left_ms*1000//100)
+                bonus = max(0, time_left_ms/100)
                 self.players[player_id].points += base + bonus
 
         await self.broadcast({"type":"question_ended","player_answer_counts":answer_choice_counts})
@@ -208,29 +215,20 @@ class GameRoom:
         leaderboard = {"type":"leaderboard","top":[]}
         leaderboard["top"] = sorted(
         [
-            {"id": p.id, "name": p.name, "points": p.points}
-            for p in self.players.values()
+            {"id": player.id, "name": player.name, "points": player.points}
+            for player in self.players.values()
         ],
         key=lambda x: x["points"],
         reverse=True
         )
-        for player in self.players.values:
-            leaderboard["top"].append({"id":player.id,"name":player.name,"points":player.points})
+       # for player in self.players.values():
+        #    leaderboard["top"].append({"id":player.id,"name":player.name,"points":player.points})
         await self.broadcast(leaderboard)
 
         # Question ended and leaderboards sent
         self.current_question_id += 1
         
   
-    async def _start_question_after(self, session, data, seconds):
-        try:
-            await asyncio.sleep(seconds)
-            #Look in data base and get question 1, for now ill supply dummy question info
-            q = {"text":"What's 2+2?","choices":["1","3","4","5"]}
-            await self.start_question(session, data)
-        except asyncio.CancelledError:
-            pass
-
     async def create_room(self, session:Session, data):
         while roomNum in rooms:
             roomNum = random.randint(100000, 999999) #generate new room num if new room num is taken
@@ -247,7 +245,7 @@ class GameRoom:
 
             # End question & send out leaderboard (included in end question)
             self.timer_task = asyncio.create_task(self._end_question_after(self.question_answer_window_seconds))
-            # Code below pauses execution untill task is over or timer canceled and end_question is called elsewhere
+            # Code below pauses execution until task is over or timer canceled and end_question is called elsewhere
             try:
                 await self.timer_task 
             except asyncio.CancelledError:

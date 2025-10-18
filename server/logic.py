@@ -43,8 +43,10 @@ async def handler(websocket):
                     await requests[requestType](roomObj, sessionOBJ, data)
                 else:
                     logging.error("HANDLER: cannot find room " + str(data.get("room")))
+                    sessionOBJ.send({"error": "room_not_found"})
             else:
                 logging.error("HANDLER: cannot find request: " + str(requestType))
+                sessionOBJ.send({"error": "invalid_request"})
                  
     except:
         traceback.print_exc()
