@@ -1,23 +1,35 @@
-# I got this from chatgpt i'll look through it later
 services:
-  server:
+  kahoot-server:
     build: ./server
-    container_name: kahoot-server
+    command: uvicorn kahoot_server:app --host 0.0.0.0 --port 8080 --reload
+    volumes:
+      - ./server:/app
     ports:
       - "8080:8080"
-    networks:
-      - kahoot-net
-  
-  client:
-    build: ./client
-    container_name: kahoot-client
-    ports:
-      - "80:5173"
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
     depends_on:
-      - server
-    networks:
-      - kahoot-net
+      - kahoot-db
 
-networks:
-  kahoot-net:
-    driver: bridge
+  kahoot-db:
+    build: ./database
+    command: uvicorn main_rest_api:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./database:/app
+    ports:
+      - "8000:8000"
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+
+  kahoot-client:
+    build: ./client
+    command: npm run dev
+    volumes:
+      - ./client:/app
+    ports:
+      - "5173:5173"
+    working_dir: /app
+    stdin_open: true
+    tty: true

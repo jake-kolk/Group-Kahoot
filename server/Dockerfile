@@ -11,13 +11,11 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# We DO NOT copy the source code here.
-# It will be mounted from the host when running the container.
+# Copy all source files into the container
+COPY . .
 
 EXPOSE 8080
 
-COPY . .
-
 # Default command: run your server script
-CMD ["python", "kahoot_server.py"]
+CMD ["python", "logic.py"]
 # --------------------------------
