@@ -43,8 +43,8 @@ class WS {
             else console.warn("Websocket closed!", ev.code, ev.reason);
             
             if (WS.options.autoReconnect !== false) {
-                console.log("Attempting to reconnect in 2 seconds.")
-                setTimeout(WS.connect, 2000);
+                console.log("Attempting to reconnect in 6 seconds.")
+                setTimeout(WS.connect, 6000);
             }
         }
 

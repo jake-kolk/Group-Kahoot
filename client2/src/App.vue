@@ -19,6 +19,7 @@ function handleLeaveGame() {
 </script>
 
 <template>
+
   <MainMenu v-if="currentScreen === 'mainMenu'" @join-lobby="handleJoinLobby"></MainMenu>
   <Lobby v-if="currentScreen === 'lobby'" :player="player" @leave-game="handleLeaveGame"></Lobby>
 </template>

@@ -16,6 +16,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8080
 
+COPY . .
+
 # Default command: run your server script
 CMD ["python", "kahoot_server.py"]
 # --------------------------------

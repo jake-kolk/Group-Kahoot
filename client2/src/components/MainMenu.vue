@@ -2,6 +2,8 @@
 import { onUnmounted, ref } from 'vue';
 import { WS } from '../services/WebSocket';
 import { Player } from '../game/Player';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 const vueEmit = defineEmits(['join-lobby']);
 const name = ref("");
@@ -12,7 +14,8 @@ function addToLog(msg: string) {
 }
 
 WS.initialize(`ws://${window.location.host}/ws/`, {
-  onopen: () => addToLog("Websocket open!"),
+  onclose: () => toast("Disconnected, reconnecting in 6 seconds...", {autoClose: 4000}),
+  onopen: () => toast("Connected to WS!", {autoClose: 4000}),
   onmessage: e => {addToLog(e.data); console.log(e.data)},
 });
 
