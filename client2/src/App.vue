@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import MainMenu from './components/MainMenu.vue'
 import Lobby from './components/Lobby.vue';
 import type { Player } from './game/Player';
-import Question from './components/Question.vue';
+import Game from './components/Game.vue';
 
 const currentScreen = ref('mainMenu');
 const player = ref();
@@ -27,7 +27,7 @@ function handleStartQuestion() {
 
   <MainMenu v-if="currentScreen === 'mainMenu'" @join-lobby="handleJoinLobby"></MainMenu>
   <Lobby v-if="currentScreen === 'lobby'" :player="player" @leave-game="handleLeaveGame" @start-game="handleStartQuestion"></Lobby>
-  <Question v-if="currentScreen === 'question'"></Question>
+  <Game v-if="currentScreen === 'question'"></Game>
 </template>
 
 <style>

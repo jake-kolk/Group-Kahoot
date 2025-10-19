@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Player } from '../game/Player';
+import { WS } from '../services/WebSocket';
 const vueEmit = defineEmits(['leave-game', 'start-game']);
 
 const props = defineProps<{player: Player}>();
@@ -9,6 +10,7 @@ function leaveLobby() {
 }
 
 function startGame() {
+    WS.emit('start_game', {room: '100000', name: props.player.name}) // TODO: unhardcode this CODE!
     vueEmit('start-game');
 }
 </script>
