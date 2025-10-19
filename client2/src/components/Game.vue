@@ -7,6 +7,8 @@ import { Question, type QuestionParams } from '../game/Question';
 const hasQuestion = ref(false);
 const question = ref();
 
+const vueEmit = defineEmits(['leave-game']);
+
 WS.on('question', data => {
     question.value = new Question(data as QuestionParams);
     hasQuestion.value = true;
@@ -15,6 +17,10 @@ WS.on('question', data => {
 WS.on('question_ended', data => {
     hasQuestion.value = false;
 });
+
+function handleLeaveGame() {
+    vueEmit('leave-game');
+}
 
 </script>
 
@@ -25,6 +31,9 @@ WS.on('question_ended', data => {
     </div>
     <div v-else>
         <QuestionComponent :question="question"></QuestionComponent>
+    </div>
+    <div>
+        <button @click="handleLeaveGame">Leave Game</button>
     </div>
 </template>
 

@@ -13,12 +13,6 @@ function addToLog(msg: string) {
   log.value.push(msg);
 }
 
-WS.initialize(`ws://${window.location.host}/ws/`, {
-  onclose: () => toast("Disconnected, reconnecting in 6 seconds...", {autoClose: 4000}),
-  onopen: () => toast("Connected to WS!", {autoClose: 4000}),
-  onmessage: e => {addToLog(e.data); console.log(e.data)},
-});
-
 function handleJoin() {
   WS.emit('join', {name: name.value, room: roomID.value});
 }
@@ -29,7 +23,7 @@ WS.on('joined', (data: Record<string, any>) => {
   joinLobby(player);
 });
 
-function joinLobby(player: Player) {
+function joinLobby(player: Player) { 
   vueEmit('join-lobby', player);
 }
 
