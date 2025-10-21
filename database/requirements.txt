@@ -6,3 +6,4 @@ pyjwt
 passlib
 uvicorn
 python-multipart
+bcrypt<4.1
