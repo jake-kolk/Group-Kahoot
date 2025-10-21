@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState} from 'react'
 import './App.css'
 
 function App() {
   const wsRef = useRef<WebSocket | null>(null)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const timerRef = useRef<number| null>(null)
 
   const [name, setName] = useState('')
   const [roomCode, setRoomCode] = useState('')
@@ -126,6 +126,7 @@ function App() {
       wsRef.current.send(
         JSON.stringify({
           type: 'answer',
+          room: roomCode,
           question_id: questionId,
           choice: selectedOption,
           time_left_ms: timeLeftMs,
