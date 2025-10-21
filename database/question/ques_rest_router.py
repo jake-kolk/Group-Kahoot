@@ -5,7 +5,7 @@ from auth.auth_handler import get_current_active_user
 
 from models import Question, QuestionUpdate, get_session, User, QuestionSet
 from sqlmodel import Session, select
-from database.api_error_code import APIErrorCode
+from api_error_code import APIErrorCode
 
 router = APIRouter()
 
@@ -16,6 +16,9 @@ def create_question(question: Question,
                     current_user: User = Depends(get_current_active_user)):
     db_question = Question.model_validate(question)
     if not db_question:
+        raise APIErrorCode.INVALID_QUESTION_DATA
+    
+    if question.correct_answer not in question.choices:
         raise APIErrorCode.INVALID_QUESTION_DATA
     
     question_set = db.get(QuestionSet, question.question_set)
@@ -79,19 +82,28 @@ def delete_question(question_id: int,
 def create_question_set(question_set: QuestionSet, 
                         db: Session = Depends(get_session),
                         current_user: User = Depends(get_current_active_user)):
+    question_set.user_id = current_user.id
     db.add(question_set)
     db.commit()
     db.refresh(question_set)
     return question_set
 
-@router.get("/question_sets/{user_id}", response_model=list[QuestionSet])
-def read_question_sets(user_id: int, 
-                       db: Session = Depends(get_session),
+@router.get("/question_sets/", response_model=list[QuestionSet])
+def read_question_sets(db: Session = Depends(get_session),
                        current_user: User = Depends(get_current_active_user)):
-    question_sets = db.exec(select(QuestionSet).where(QuestionSet.user_id == user_id)).all()
+    question_sets = db.exec(select(QuestionSet).where(QuestionSet.user_id == current_user.id)).all()
     if not question_sets:
         raise APIErrorCode.QUESTION_SET_NOT_FOUND
     return question_sets
+
+@router.get("/question_sets/{question_set_id}", response_model=QuestionSet)
+def read_question_set(question_set_id: int,
+                        db: Session = Depends(get_session),
+                        current_user: User = Depends(get_current_active_user)):
+    question_set = db.get(QuestionSet, question_set_id)
+    if not question_set:
+        raise APIErrorCode.QUESTION_SET_NOT_FOUND
+    return question_set
 
 @router.delete("/question_sets/{question_set_id}", response_model=QuestionSet)
 def delete_question_set(question_set_id: int, 
