@@ -21,6 +21,9 @@ def create_question(question: Question,
     if question.correct_answer not in question.choices:
         raise APIErrorCode.INVALID_QUESTION_DATA
     
+    if len(question.choices) < 2 or len(question.choices) > 4:
+        raise APIErrorCode.INVALID_QUESTION_DATA
+    
     question_set = db.get(QuestionSet, question.question_set)
     if not question_set:
         raise APIErrorCode.QUESTION_SET_NOT_EXIST
@@ -38,6 +41,12 @@ def update_question(question_id: int,
     db_question = db.get(Question, question_id)
     if not db_question:
         raise APIErrorCode.QUESTION_NOT_FOUND
+    
+    if question.correct_answer not in question.choices:
+        raise APIErrorCode.INVALID_QUESTION_DATA
+    
+    if len(question.choices) < 2 or len(question.choices) > 4:
+        raise APIErrorCode.INVALID_QUESTION_DATA
 
     for key, value in question.model_dump(exclude_unset=True).items():
         setattr(db_question, key, value)

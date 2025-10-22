@@ -24,3 +24,6 @@ You can change the first port number 80 to whatever port you want
 
 ## API Documentation and testing
 In your browser, go to https://localhost:8000
+
+## For direct access
+use import question.question_api
