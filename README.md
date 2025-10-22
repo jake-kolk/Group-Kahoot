@@ -21,7 +21,7 @@ You can run this through docker or manually:
 1. First cd to server directory, should be something like `cd <path to server>/server`  
 2. Then run `python3 logic.py`  
 
-#### When you make changes  
+#### When you make changes to backend:
 1. Interupt console using CTRL + C    
 2, Run `python3 logic.py`   
 
