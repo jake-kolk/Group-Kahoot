@@ -16,5 +16,6 @@ COPY . .
 
 EXPOSE 8080
 
-# Default command: run your main script
+# Default command: run your server script
 CMD ["python", "logic.py"]
+# --------------------------------

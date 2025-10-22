@@ -137,9 +137,6 @@ class GameRoom:
         # Start main game loop
         # await self.run_game()
             # Start main game loop in background so the websocket handler stays responsive
-
-        # Tell everypne game started
-        await self.broadcast({"type":"game_started"})
         if not hasattr(self, "game_task") or self.game_task.done():
             self.game_task = asyncio.create_task(self.run_game())
             

@@ -1,3 +1,14 @@
+# FLOW
+
+### JOIN GAME
+- client: `{type: join, room: (string), name: (string)}`
+- server: `{type: joined, id: (int), room: (string)}`
+- server: `{type: player_joined, id: (int), name: (string)}` for each player in lobby
+
+### LEAVE GAME
+- client: `{type: player_leave, room: (string)}`
+- server: `{type: player_left, id: (int)}`
+
 # Events
 I haven't checked to make sure these signatures match with the server yet!
 The types might be called something different!
