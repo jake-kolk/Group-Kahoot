@@ -23,7 +23,7 @@ You can run this through docker or manually:
 
 #### When you make changes to backend:
 1. Interupt console using CTRL + C    
-2, Run `python3 logic.py`   
+2. Run `python3 logic.py`   
 
 ## Contributing
 - Make sure you only push working code to main  
