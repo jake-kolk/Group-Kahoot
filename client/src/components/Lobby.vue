@@ -11,8 +11,11 @@ function leaveLobby() {
 
 function startGame() {
     WS.emit('start_game', {room: '100000', name: props.player.name}) // TODO: unhardcode this CODE!
-    vueEmit('start-game');
 }
+
+WS.on("game_started", () => {
+    vueEmit('start-game');
+});
 </script>
 
 <template>
