@@ -16,13 +16,10 @@ You can run this through docker or manually:
 4. `cd client`
 5. `npm install`
 6. `npm run dev`
-### Backend
-#### First cd to server directory
-Should be something like
-`cd <path to server>/server`  
 
-#### Start the server
-`python3 logic.py`  
+#### Backend  
+1. First cd to server directory, should be something like `cd <path to server>/server`  
+2. Then run `python3 logic.py`  
 
 #### When you make changes  
 1. Interupt console using CTRL + C    
