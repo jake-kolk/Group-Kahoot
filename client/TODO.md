@@ -1,2 +1,0 @@
-- Need a main menu with join game and create game
-    - With create game, it will assign

@@ -300,3 +300,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/react,visualstudiocode,macos,windows,c++,python
+
+#vite files
+.vite/
