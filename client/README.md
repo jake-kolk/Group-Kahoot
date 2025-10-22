@@ -1,13 +1,5 @@
-## Installation
+# Vue 3 + TypeScript + Vite
 
-Run without docker. This is best for development as the site will update live without needing to restart the webserver.
-1. Install [node.js](https://nodejs.org/)
-2. clone repository
-3. `cd ./client`
-5. `npm install`
-6. `npm run dev`
+This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-Alternatively, you can use docker
-1. `docker build -t kahoot-client .`
-2. `docker run --rm -p 80:80 kahoot-client`
-You can change the first port number 80 to whatever port you want
+Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
