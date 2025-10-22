@@ -140,10 +140,10 @@ class GameRoom:
 
         # Tell everypne game started
         await self.broadcast({"type":"game_started"})
+
         if not hasattr(self, "game_task") or self.game_task.done():
             self.game_task = asyncio.create_task(self.run_game())
             
-
     async def start_question(self):
         question_id = self.current_question_id
         question = {"text":"What's 2+2?","choices":["1","3","4","5"]}
