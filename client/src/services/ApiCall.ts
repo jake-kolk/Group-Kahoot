@@ -161,4 +161,6 @@ const deleteQuestion = async (token: string, questionId: number) => {
     }
 };
 
-export { loginUser, registerUser, fetchUserProfile, createQuestionSet, createQuestion, updateQuestion, deleteQuestion };
+export { loginUser, registerUser, fetchUserProfile, 
+    createQuestionSet, fetchQuestionSets, updateQuestionSet, deleteQuestionSet,
+    createQuestion, updateQuestion, fetchQuestions, deleteQuestion };
