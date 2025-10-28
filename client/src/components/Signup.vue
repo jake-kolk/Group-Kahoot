@@ -7,7 +7,7 @@ const email = ref('');
 const password = ref('');
 
 function handleSignup() {
-    registerUser(username.value, email.value, password.value)
+    registerUser({username: username.value, email: email.value, password: password.value})
         .then(response => {
             console.log("Signup successful:", response);
             // Handle successful signup (e.g., redirect to login page)
@@ -23,9 +23,11 @@ function handleSignup() {
 <template>
     <div>
         <h2>Signup</h2>
-        <input v-model="username" placeholder="Username" />
-        <input v-model="email" type="email" placeholder="Email" />
-        <input v-model="password" type="password" placeholder="Password" />
-        <button @click="handleSignup">Signup</button>
+        <form @submit.prevent="handleSignup">
+            <input v-model="username" placeholder="Username" />
+            <input v-model="email" type="email" placeholder="Email" />
+            <input v-model="password" type="password" placeholder="Password" />
+            <button type="submit">Signup</button>
+        </form>
     </div>
 </template>

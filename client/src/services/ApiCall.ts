@@ -1,8 +1,20 @@
 import axios from 'axios';
+import { defineStore } from 'pinia';
 
 const API_URL = 'https://localhost:8000';
 
-const loginUser = async (credentials: {username: string, password: string}) => {
+export const authKey = defineStore('authKey', {
+    state: () => ({
+        token: ''
+    }),
+    actions: {
+        setToken(newToken: string) {
+            this.token = newToken;
+        }
+    }
+})
+
+export const loginUser = async (credentials: {username: string, password: string}) => {
     try {
         const params = new URLSearchParams();
         for (const key in credentials) {
@@ -15,13 +27,14 @@ const loginUser = async (credentials: {username: string, password: string}) => {
       },
     });
     console.log("response data: ", response.data);
+    authKey().setToken(response.data.access_token);
     return response.data;
     }catch (error) {
         console.log("Login error:", error);
     }
 };
 
-const registerUser = async (userInfo: {username: string, password: string, email: string}) => {
+export const registerUser = async (userInfo: {username: string, password: string, email: string}) => {
     try {
         const response = await axios.post(`${API_URL}/auth/register`, userInfo);
         return response.data;
@@ -30,7 +43,7 @@ const registerUser = async (userInfo: {username: string, password: string, email
     }
 }
 
-const fetchUserProfile = async (token: string) => {
+export const fetchUserProfile = async (token: string) => {
   try {
     console.log("FetchUserProfile token: ", token);
     const response = await axios.get(`${API_URL}/users/me`, {
@@ -49,7 +62,7 @@ const fetchUserProfile = async (token: string) => {
 // 
 //
 
-const createQuestionSet = async (token: string, questionSetData: {title: string, description?: string}) => {
+export const createQuestionSet = async (token: string, questionSetData: {title: string, description?: string}) => {
     try {
         const response = await axios.post(`${API_URL}/questionsets/`, questionSetData, {
             headers: {
@@ -63,7 +76,7 @@ const createQuestionSet = async (token: string, questionSetData: {title: string,
     }
 };
 
-const fetchQuestionSets = async (token: string) => {
+export const fetchAllQuestionSets = async (token: string) => {
     try {
         const response = await axios.get(`${API_URL}/questionsets/`, {
             headers: {
@@ -77,7 +90,21 @@ const fetchQuestionSets = async (token: string) => {
     }
 };
 
-const updateQuestionSet = async (token: string, questionSetId: number, updateData: {title?: string, description?: string}) => {
+export const fetchQuestionSet = async (token: string, questionSetId: number) => {
+    try {
+        const response = await axios.get(`${API_URL}/questionsets/${questionSetId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Fetch question set error:", error);
+        throw error;
+    }
+};
+
+export const updateQuestionSet = async (token: string, questionSetId: number, updateData: {title?: string, description?: string}) => {
     try {
         const response = await axios.patch(`${API_URL}/questionsets/${questionSetId}`, updateData, {
             headers: {
@@ -91,7 +118,7 @@ const updateQuestionSet = async (token: string, questionSetId: number, updateDat
     }
 };
 
-const deleteQuestionSet = async (token: string, questionSetId: number) => {
+export const deleteQuestionSet = async (token: string, questionSetId: number) => {
     try {
         const response = await axios.delete(`${API_URL}/questionsets/${questionSetId}`, {
             headers: {
@@ -105,7 +132,7 @@ const deleteQuestionSet = async (token: string, questionSetId: number) => {
     }
 };
 
-const createQuestion = async (token: string, questionData: {question_set: number, question_text: string, choices: string[], correct_answer: string, time_limit: number}) => {
+export const createQuestion = async (token: string, questionData: {question_set: number, question_text: string, choices: string[], correct_answer: string, time_limit: number}) => {
     try {
         const response = await axios.post(`${API_URL}/questions/`, questionData, {
             headers: {
@@ -119,7 +146,7 @@ const createQuestion = async (token: string, questionData: {question_set: number
     }
 };
 
-const fetchQuestions = async (token: string, questionSetId: number) => {
+export const fetchAllQuestions = async (token: string, questionSetId: number) => {
     try {
         const response = await axios.get(`${API_URL}/questions/?question_set=${questionSetId}`, {
             headers: {
@@ -133,7 +160,21 @@ const fetchQuestions = async (token: string, questionSetId: number) => {
     }
 };
 
-const updateQuestion = async (token: string, questionId: number, updateData: {question_text?: string, choices?: string[], correct_answer?: string, time_limit?: number}) => {
+export const fetchQuestion = async (token: string, questionId: number) => {
+    try {
+        const response = await axios.get(`${API_URL}/questions/${questionId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Fetch question error:", error);
+        throw error;
+    }
+};
+
+export const updateQuestion = async (token: string, questionId: number, updateData: {question_text?: string, choices?: string[], correct_answer?: string, time_limit?: number}) => {
     try {
         const response = await axios.patch(`${API_URL}/questions/${questionId}`, updateData, {
             headers: {
@@ -147,7 +188,7 @@ const updateQuestion = async (token: string, questionId: number, updateData: {qu
     }
 };
 
-const deleteQuestion = async (token: string, questionId: number) => {
+export const deleteQuestion = async (token: string, questionId: number) => {
     try {
         const response = await axios.delete(`${API_URL}/questions/${questionId}`, {
             headers: {
@@ -160,7 +201,3 @@ const deleteQuestion = async (token: string, questionId: number) => {
         throw error;
     }
 };
-
-export { loginUser, registerUser, fetchUserProfile, 
-    createQuestionSet, fetchQuestionSets, updateQuestionSet, deleteQuestionSet,
-    createQuestion, updateQuestion, fetchQuestions, deleteQuestion };

@@ -6,7 +6,7 @@ const username = ref('');
 const password = ref('');
 
 function handleLogin() {
-    loginUser(username.value, password.value)
+    loginUser({username: username.value, password: password.value})
         .then(response => {
             console.log("Login successful:", response);
             // Handle successful login (e.g., redirect to another page)
@@ -22,8 +22,10 @@ function handleLogin() {
 <template>
     <div>
         <h2>Login</h2>
-        <input v-model="username" placeholder="Username" />
-        <input v-model="password" type="password" placeholder="Password" />
-        <button @click="handleLogin">Login</button>
+        <form @submit.prevent="handleLogin">
+            <input v-model="username" placeholder="Username" />
+            <input v-model="password" type="password" placeholder="Password" />
+            <button type="submit">Login</button>
+        </form>
     </div>
 </template>
