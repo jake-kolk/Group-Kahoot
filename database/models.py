@@ -7,7 +7,6 @@ class UserBase(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str
     email: str
-    admin: bool = False
 
 class User(UserBase, table=True):
     hashed_password: str = Field(max_length=255)
@@ -33,6 +32,7 @@ class QuestionBase(SQLModel):
     question_text: str
     choices: List[str] = Field(sa_column=Column(JSON))
     correct_answer: str
+    time_limit: int
 
 class Question(QuestionBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
