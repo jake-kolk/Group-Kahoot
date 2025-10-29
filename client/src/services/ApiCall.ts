@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
 
-const API_URL = 'https://localhost:8000';
+const API_URL = 'http://localhost:8000';
 
 export const authKey = defineStore('authKey', {
     state: () => ({

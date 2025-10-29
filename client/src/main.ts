@@ -5,16 +5,16 @@ import './style.css'
 import App from './App.vue'
 import Login from './components/Login.vue'
 import Signup from './components/Signup.vue'
-import MainMenu from './components/MainMenu.vue'
 import QuestionSetList from './components/QuestionSetList.vue'
 import QuestionSetEdit from './components/QuestionSetEdit.vue'
 import QuestionList from './components/QuestionList.vue'
 import QuestionEdit from './components/QuestionEdit.vue'
+import GamePage from './components/GamePage.vue'
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {path: '/', component: MainMenu},
+        {path: '/', component: GamePage},
         {path: '/login', component: Login},
         {path: '/signup', component: Signup},
         {path: '/questionsets/:UserId', component: QuestionSetList, props: true},
