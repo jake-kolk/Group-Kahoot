@@ -14,19 +14,19 @@ I haven't checked to make sure these signatures match with the server yet!
 The types might be called something different!
 
 ## Client sends
-- player_join: joins with a name and code
+- player_join: joins with a name and code  
     - `{type: player_join, room: (string), name: (string)}`
-- player_leave: Leaves using their id now.
+- player_leave: Leaves using their id now.  
     - `{type: player_leave, id: (int)}`
-- answer_question
+- answer_question  
     - `{type: answer_question, id: (int), answer: (int)}`
 - create_game `LATER`
-- start_game: starts the game
+- start_game: starts the game  
     - `{type: start_game, room: (string), name: (string)}`
 ## Server sends
-- start_game
+- start_game  
     -`{"type":"game_started"}`
-- start_question: sends question to players with a timer to answer
+- start_question: sends question to players with a timer to answer  
     - `{type: start_question, question: (string), timer: (int)}`
 - end_question  
   -`{"type":"question_ended","player_answer_counts":answer_choice_counts}`
