@@ -28,7 +28,7 @@ The types might be called something different!
     -`{"type":"game_started"}`
 - start_question: sends question to players with a timer to answer
     - `{type: start_question, question: (string), timer: (int)}`
-- end_question
+- end_question  
   -`{"type":"question_ended","player_answer_counts":answer_choice_counts}`
   - `{"type":"leaderboard","top":[]}`  
 - player_joined: sends a message to other clients in the game about who joined
