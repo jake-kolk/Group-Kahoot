@@ -25,9 +25,11 @@ The types might be called something different!
     - `{type: start_game, room: (string), name: (string)}`
 ## Server sends
 - start_game
+    -`{"type":"game_started"}`
 - start_question: sends question to players with a timer to answer
     - `{type: start_question, question: (string), timer: (int)}`
 - end_question
+    - `
 - player_joined: sends a message to other clients in the game about who joined
     - `{type: player_joined, name: (string)}`
 - player_left: sends a message about who left
