@@ -6,6 +6,7 @@ import type { Player } from './game/Player';
 import Game from './components/Game.vue';
 import { WS } from './services/WebSocket';
 import { toast } from 'vue3-toastify';
+import Host from "./components/Host.vue";
 
 const currentScreen = ref('mainMenu');
 const player = ref();
@@ -35,10 +36,12 @@ function handleStartQuestion() {
 </script>
 
 <template>
-  <RouterView />
+  <!-- <RouterView /> -->
   <MainMenu v-if="currentScreen === 'mainMenu'" @join-lobby="handleJoinLobby"></MainMenu>
   <Lobby v-if="currentScreen === 'lobby'" :player="player" @leave-game="handleLeaveGame" @start-game="handleStartQuestion"></Lobby>
   <Game v-if="currentScreen === 'question'" @leave-game="handleLeaveGame"></Game>
+  <Host v-if="currentScreen === 'host'"></Host>
+
 </template>
 
 <style>
