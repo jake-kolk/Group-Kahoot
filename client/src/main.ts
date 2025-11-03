@@ -17,15 +17,15 @@ const router = createRouter({
         {path: '/', component: GamePage},
         {path: '/login', component: Login},
         {path: '/signup', component: Signup},
-        {path: '/questionsets/:UserId', component: QuestionSetList, props: true},
-        {path: '/questionsets/edit/:id', component: QuestionSetEdit, props: true},
-        {path: '/questions/:questionSetId', component: QuestionList, props: true},
-        {path: '/questions/edit/:id', component: QuestionEdit, props: true},
+        {path: '/question_sets/:UserId', component: QuestionSetList, props: true},
+        {path: '/question_sets/:UserId/edit/:id', component: QuestionSetEdit, props: true},
+        {path: '/questions/:userId/:questionSetId', component: QuestionList, props: true},
+        {path: '/questions/:UserId/edit/:id', component: QuestionEdit, props: true},
     ],
 })
 
 
-const app = createApp(App)
+const app = createApp(App);
 app.use(router);
 app.use(createPinia());
-app.mount('#app')
+app.mount('#app');

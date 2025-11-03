@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { registerUser } from "../services/ApiCall";
+import { authProvider } from "../services/ApiCall";
 
 const username = ref('');
 const email = ref('');
 const password = ref('');
 
+const auth = authProvider();
+
 function handleSignup() {
-    registerUser({username: username.value, email: email.value, password: password.value})
+    auth.register({username: username.value, email: email.value, password: password.value})
         .then(response => {
             console.log("Signup successful:", response);
             // Handle successful signup (e.g., redirect to login page)

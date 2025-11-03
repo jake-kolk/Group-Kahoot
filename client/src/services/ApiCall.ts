@@ -1,20 +1,46 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
+import { ref, watch } from 'vue';
+import type { LoginResponse } from '../types/types';
 
 const API_URL = 'http://localhost:8000';
 
-export const authKey = defineStore('authKey', {
-    state: () => ({
-        token: ''
-    }),
-    actions: {
-        setToken(newToken: string) {
-            this.token = newToken;
+export const authProvider = defineStore('authProvider', () => {
+    const token = ref("");
+    const username = ref("");
+    const userid = ref<number | null>(null);
+
+    watch(token, (newToken) => {
+        if (newToken){
+            const getUser = async () => {
+                const response = await fetchUserProfile(newToken);
+                username.value = response.username;
+                userid.value = response.id;
+            }
+            getUser();
+        }
+    })
+
+    async function login(credentials: {username: string, password: string}){
+        const response = await loginUser(credentials);
+        if (response != undefined){
+            token.value = response.access_token;
         }
     }
+
+    async function register(info: {username: string, password: string, email: string}){
+        await registerUser(info);
+    }
+
+    function logout() {
+        token.value = "";
+        username.value = "";
+    }
+
+    return {token, username, userid, login, register, logout}
 })
 
-export const loginUser = async (credentials: {username: string, password: string}) => {
+const loginUser = async (credentials: {username: string, password: string}): Promise<LoginResponse|undefined> => {
     try {
         const params = new URLSearchParams();
         for (const key in credentials) {
@@ -27,23 +53,23 @@ export const loginUser = async (credentials: {username: string, password: string
       },
     });
     console.log("response data: ", response.data);
-    authKey().setToken(response.data.access_token);
     return response.data;
     }catch (error) {
         console.log("Login error:", error);
     }
 };
 
-export const registerUser = async (userInfo: {username: string, password: string, email: string}) => {
+const registerUser = async (userInfo: {username: string, password: string, email: string}) => {
     try {
         const response = await axios.post(`${API_URL}/auth/register`, userInfo);
+        console.log("Register response data: ", response.data);
         return response.data;
     } catch (error) {
         console.log("Registration error:", error);
     }
 }
 
-export const fetchUserProfile = async (token: string) => {
+const fetchUserProfile = async (token: string) => {
   try {
     console.log("FetchUserProfile token: ", token);
     const response = await axios.get(`${API_URL}/users/me`, {
@@ -51,6 +77,7 @@ export const fetchUserProfile = async (token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    console.log("Fetch user profile response data: ", response.data);
     return response.data;
   } catch (error) {
     console.log("Fetch user profile error: ", error);
@@ -78,7 +105,7 @@ export const createQuestionSet = async (token: string, questionSetData: {title: 
 
 export const fetchAllQuestionSets = async (token: string) => {
     try {
-        const response = await axios.get(`${API_URL}/questionsets/`, {
+        const response = await axios.get(`${API_URL}/question_sets/`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -92,7 +119,7 @@ export const fetchAllQuestionSets = async (token: string) => {
 
 export const fetchQuestionSet = async (token: string, questionSetId: number) => {
     try {
-        const response = await axios.get(`${API_URL}/questionsets/${questionSetId}`, {
+        const response = await axios.get(`${API_URL}/question_sets/${questionSetId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -106,7 +133,7 @@ export const fetchQuestionSet = async (token: string, questionSetId: number) => 
 
 export const updateQuestionSet = async (token: string, questionSetId: number, updateData: {title?: string, description?: string}) => {
     try {
-        const response = await axios.patch(`${API_URL}/questionsets/${questionSetId}`, updateData, {
+        const response = await axios.patch(`${API_URL}/question_sets/${questionSetId}`, updateData, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -120,7 +147,7 @@ export const updateQuestionSet = async (token: string, questionSetId: number, up
 
 export const deleteQuestionSet = async (token: string, questionSetId: number) => {
     try {
-        const response = await axios.delete(`${API_URL}/questionsets/${questionSetId}`, {
+        const response = await axios.delete(`${API_URL}/question_sets/${questionSetId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
