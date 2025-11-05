@@ -18,7 +18,6 @@ class UserUpdate(UserBase):
     username: Optional[str] = None
     email: Optional[str] = None
     password: Optional[str] = None
-    admin: Optional[bool] = None
 
 
 class QuestionSet(SQLModel, table=True):

@@ -27,6 +27,8 @@ def create_question(question: Question,
     question_set = db.get(QuestionSet, question.question_set)
     if not question_set:
         raise APIErrorCode.QUESTION_SET_NOT_EXIST
+    if question_set.user_id != current_user.id:
+        raise APIErrorCode.UNAUTHORIZED_ACTION
 
     db.add(db_question)
     db.commit()

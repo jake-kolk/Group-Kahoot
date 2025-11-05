@@ -7,3 +7,4 @@ class APIErrorCode:
     QUESTION_NOT_FOUND = HTTPException(status_code=404, detail="Question not found")
     QUESTION_SET_NOT_FOUND = HTTPException(status_code=404, detail="Question set not found")
     LLM_SERVICE_ERROR = HTTPException(status_code=500, detail="LLM service error")
+    UNAUTHORIZED_ACTION = HTTPException(status_code=403, detail="Unauthorized action")

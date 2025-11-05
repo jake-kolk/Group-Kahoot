@@ -24,7 +24,7 @@ llm = Llama(model_path=MODEL_PATH, temperature=TEMPERATURE, max_tokens=MAX_TOKEN
 #     """
 #     return f"Generating a quiz on '{topic}' with {num_questions} questions. The questions will have 4 multiple-choice answers each."
 
-
+'''
 @mcp.tool()
 def generate_quiz_questions(topic: str, count: int, difficulty: str ='medium') -> str:
     """
@@ -78,7 +78,23 @@ def generate_quiz_questions(topic: str, count: int, difficulty: str ='medium') -
         "error": "Failed to parse generated questions.",
         "raw_response": text
     }
+'''
 
+@mcp.tool()
+def insert_quiz_into_db(quiz_json: json)->str:
+    """
+    Insert generated quiz into the database
+
+    Args:
+        quiz_json: The JSON containing the quiz data
+
+    Returns:
+        A success or failure message
+    """
+    # Here you would add the logic to insert the quiz into your database
+    # For demonstration, we will just log the quiz and return a success message
+    logger.info(f"Inserting quiz into database: {quiz_json}")
+    return "Quiz inserted successfully into the database."
 
 
 if __name__ == "__main__":
