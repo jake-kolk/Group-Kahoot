@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { fetchAllQuestionSets, authKey } from "../services/ApiCall";
+import { useRouter } from 'vue-router';
+import { fetchAllQuestionSets, authProvider } from "../services/ApiCall";
 import type { QuestionSet } from "../types/types";
 
+defineProps({
+    UserId: Number
+})
+
 const questionSets = ref<QuestionSet[]>([]);
+const auth = authProvider();
+const router = useRouter();
 
 function loadQuestionSets() {
-    const token = authKey().token;
+    const token = auth.token;
+    if (!token) {
+        console.log("Not logged in");
+        router.push({ path: '/login' });
+        return;
+    }
     fetchAllQuestionSets(token)
         .then((data) => {
             questionSets.value = data;
@@ -24,9 +36,10 @@ loadQuestionSets();
     <div>
         <h2>Question Sets</h2>
         <ul>
-            <li v-for="set in questionSets" :key="set.id">
+            <span v-for="set in questionSets" :key="set.id" 
+            @click="router.push({ path: `/question_sets/${auth.userid}/edit/${set.id}` })">
                 {{ set.title }}
-            </li>
+            </span>
         </ul>
     </div>
 

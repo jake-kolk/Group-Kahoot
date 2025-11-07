@@ -8,4 +8,6 @@ class Token(BaseModel):
     token_type: str
 
 class UserResponse(BaseModel):
+    id: int
+    username: str
     email: str | None = None
