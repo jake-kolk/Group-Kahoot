@@ -7,7 +7,7 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 from dotenv import load_dotenv
-from llama_ccp import Llama
+from llama_cpp import Llama
 import os
 
 MODEL_PATH = "./tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"
@@ -43,6 +43,7 @@ class MCPClient:
         response = await self.session.list_tools()
         tools = response.tools
         print(f"Connected to MCP server with tools: {tools}")
+
 
     async def process_query(self, query: str) -> str:
         """Process a query using the MCP server
@@ -102,6 +103,24 @@ class MCPClient:
 
         return "\n".join(final_text)
     
+    async def chat_loop(self):
+        """Run an interactive chat loop"""
+        print("\nMCP Client Started!")
+        print("Type your queries or 'quit' to exit.")
+
+        while True:
+            try:
+                query = input("\nQuery: ").strip()
+
+                if query.lower() == 'quit':
+                    break
+
+                response = await self.process_query(query)
+                print("\n" + response)
+
+            except Exception as e:
+                print(f"\nError: {str(e)}")
+        
     async def cleanup(self):
         """Cleanup resources"""
         await self.exit_stack.aclose()
@@ -115,7 +134,7 @@ async def main():
     client = MCPClient()
     try:
         await client.connect_to_server(sys.argv[1])
-
+        await client.chat_loop()
     finally:
         await client.cleanup()
 

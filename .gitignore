@@ -295,4 +295,4 @@ $RECYCLE.BIN/
 #vite files
 .vite/
 
-.gguf
+*.gguf
