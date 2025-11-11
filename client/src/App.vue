@@ -1,3 +1,4 @@
+
 <script setup lang="ts">
 import { ref } from 'vue';
 import MainMenu from './components/MainMenu.vue'
@@ -46,3 +47,19 @@ function handleStartQuestion() {
 
 <style>
 </style>
+"""
+# this is from main before hostPage merge
+<script setup lang="ts">
+
+
+// TODO: change all these handles to one big handle with a parameter for next destination
+
+</script>
+
+<template>
+  <RouterView />
+</template>
+
+<style>
+</style>
+"""
