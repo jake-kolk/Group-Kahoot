@@ -32,29 +32,9 @@ function handleStartQuestion() {
   currentScreen.value = 'question';
 }
 
-// TODO: change all these handles to one big handle with a parameter for next destination
-
 </script>
 
-<template>
-  <!-- <RouterView /> -->
-  <MainMenu v-if="currentScreen === 'mainMenu'" @join-lobby="handleJoinLobby"></MainMenu>
-  <Lobby v-if="currentScreen === 'lobby'" :player="player" @leave-game="handleLeaveGame" @start-game="handleStartQuestion"></Lobby>
-  <Game v-if="currentScreen === 'question'" @leave-game="handleLeaveGame"></Game>
-  <Host v-if="currentScreen === 'host'"></Host>
 
-</template>
-
-<style>
-</style>
-"""
-# this is from main before hostPage merge
-<script setup lang="ts">
-
-
-// TODO: change all these handles to one big handle with a parameter for next destination
-
-</script>
 
 <template>
   <RouterView />
@@ -62,4 +42,4 @@ function handleStartQuestion() {
 
 <style>
 </style>
-"""
+

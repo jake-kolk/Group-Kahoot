@@ -10,6 +10,7 @@ import QuestionSetEdit from './components/QuestionSetEdit.vue'
 import QuestionList from './components/QuestionList.vue'
 import QuestionEdit from './components/QuestionEdit.vue'
 import GamePage from './components/GamePage.vue'
+import Host from './components/Host.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -21,6 +22,7 @@ const router = createRouter({
         {path: '/question_sets/:UserId/edit/:id', component: QuestionSetEdit, props: true},
         {path: '/questions/:userId/:questionSetId', component: QuestionList, props: true},
         {path: '/questions/:UserId/edit/:id', component: QuestionEdit, props: true},
+        {path: '/host', component: Host, props: false}
     ],
 })
 
