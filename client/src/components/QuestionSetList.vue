@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { fetchAllQuestionSets, authProvider } from "../services/ApiCall";
+import { fetchAllQuestionSets, authProvider, checkAuth } from "../services/ApiCall";
 import type { QuestionSet } from "../types/types";
 
 defineProps({
@@ -13,8 +13,8 @@ const auth = authProvider();
 const router = useRouter();
 
 function loadQuestionSets() {
-    const token = auth.token;
-    if (!token) {
+    const token = auth.access_token;
+    if (!checkAuth()) {
         console.log("Not logged in");
         router.push({ path: '/login' });
         return;

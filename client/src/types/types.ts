@@ -16,5 +16,8 @@ export interface Question {
 
 export interface LoginResponse {
     access_token: string,
-    token_type: string
+    refresh_token: string,
+    token_type: "bearer",
+    user_id: number,
+    success : boolean
 }

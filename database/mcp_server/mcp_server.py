@@ -1,8 +1,11 @@
 from fastmcp import FastMCP
 import logging
-from llamma_cpp import llama
 import json
 import os
+from llama_cpp import Llama
+
+from question.ques_rest_handler import *
+from models import *
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -81,7 +84,26 @@ def generate_quiz_questions(topic: str, count: int, difficulty: str ='medium') -
 '''
 
 @mcp.tool()
-def insert_quiz_into_db(quiz_json: json)->str:
+def create_new_question_set(question_set: QuestionSet) -> str:
+    """
+    Create a new question set in the database
+
+    Args:
+        question_set: The QuestionSet object containing title, description, and user_id
+
+    Returns:
+        A success or failure message
+    """
+    # Here you would add the logic to insert the question set into your database
+    # For demonstration, we will just log the question set and return a success message
+
+    create_question_set(get_session(), question_set)
+
+    logger.info(f"Creating new question set in database: {question_set}")
+    return "Question set created successfully in the database."
+
+@mcp.tool()
+def insert_question(quiz_json: Question)->str:
     """
     Insert generated quiz into the database
 
@@ -93,6 +115,10 @@ def insert_quiz_into_db(quiz_json: json)->str:
     """
     # Here you would add the logic to insert the quiz into your database
     # For demonstration, we will just log the quiz and return a success message
+
+    for question in quiz_json.questions:
+        create_question(get_session(), question)
+
     logger.info(f"Inserting quiz into database: {quiz_json}")
     return "Quiz inserted successfully into the database."
 

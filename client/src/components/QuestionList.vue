@@ -9,7 +9,7 @@ const questionSetTitle = ref('');
 const questions = ref<Question[]>([]);
 
 function fetchQuestionSetTitle() {
-    const token = authProvider().token;
+    const token = authProvider().access_token;
     fetchQuestionSet(token, Number(questionSetId))
         .then((data) => {
             if (data) {
@@ -22,7 +22,7 @@ function fetchQuestionSetTitle() {
 }
 
 function loadQuestions() {
-    const token = authProvider().token;
+    const token = authProvider().access_token;
     fetchAllQuestions(token, Number(questionSetId))
         .then((data) => {
             questions.value = data;

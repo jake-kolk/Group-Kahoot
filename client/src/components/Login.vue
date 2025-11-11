@@ -13,13 +13,12 @@ function handleLogin() {
     auth.login({username: username.value, password: password.value})
         .then(response => {
             console.log("Login successful:", response);
-            // Handle successful login (e.g., redirect to another page)
+            auth.userid = response.user_id;
             router.push({path: `/question_sets/${auth.userid}` })
         })
         .catch(error => {
             console.error("Login failed:", error);
-            // Handle login failure (e.g., show error message)
-
+            // Handle login failure (e.g., show error message) (usually fails from bad creds)
         });
 }
 
@@ -29,7 +28,7 @@ function handleLogin() {
     <div>
         <h2>Login</h2>
         <form @submit.prevent="handleLogin">
-            <input v-model="username" placeholder="Username" />
+            <input v-model="username" placeholder="Email" />
             <input v-model="password" type="password" placeholder="Password" />
             <button type="submit">Login</button>
         </form>

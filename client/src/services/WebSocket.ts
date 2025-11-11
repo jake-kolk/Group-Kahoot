@@ -1,7 +1,8 @@
 interface Options {
     onopen?: (e: Event) => void,
-    onclose?: (e: Event) => void,
+    onclose?: (e: CloseEvent) => void,
     onmessage?: (e: MessageEvent) => void,
+    onerror?: (e: Event) => void,
     autoReconnect?: boolean
 }
 
