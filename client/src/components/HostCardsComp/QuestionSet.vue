@@ -2,6 +2,7 @@
     import { ref } from 'vue'
     
     const currSet = ref('Sports Trivia')
+    const selected = ref('') 
 
     function SetQuestion()
     {
