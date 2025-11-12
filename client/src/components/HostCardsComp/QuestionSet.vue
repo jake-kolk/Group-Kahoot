@@ -1,12 +1,12 @@
-<script setup>
+<script setup lang="ts">
     import { ref } from 'vue'
     
     const currSet = ref('Sports Trivia')
 
-    // function getQuestionSet()
-    // {
+    function SetQuestion()
+    {
         
-    // }
+    }
 
 </script>
 <template>
@@ -22,7 +22,7 @@
                 <option>Set 2</option>
                 <option>Set 3</option>
             </select>
-            <button class="m-2" @click="SetQuestionTimer">Set</button>
+            <button class="m-2" @click="SetQuestion">Set</button>
         </div>
     </div>
    

@@ -13,5 +13,6 @@
     <qcCard></qcCard>
     <qTimer></qTimer>
     <qSet></qSet>
+    <button>Play</button>
     
 </template>

@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
     import { ref } from 'vue'
     
-    const numQuestions = ref("30")
+    var numQuestions = ref("30")
 
     //Update count in DB
     function SetQuestionCount()
