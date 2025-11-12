@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { fetchAllQuestions, fetchQuestionSet, authKey } from "../services/ApiCall";
+import { fetchAllQuestions, fetchQuestionSet, authProvider } from "../services/ApiCall";
 import type { Question } from "../types/types";
 
 const { questionSetId } = defineProps<{ questionSetId: string }>();
@@ -9,7 +9,7 @@ const questionSetTitle = ref('');
 const questions = ref<Question[]>([]);
 
 function fetchQuestionSetTitle() {
-    const token = authKey().token;
+    const token = authProvider().access_token;
     fetchQuestionSet(token, Number(questionSetId))
         .then((data) => {
             if (data) {
@@ -22,7 +22,7 @@ function fetchQuestionSetTitle() {
 }
 
 function loadQuestions() {
-    const token = authKey().token;
+    const token = authProvider().access_token;
     fetchAllQuestions(token, Number(questionSetId))
         .then((data) => {
             questions.value = data;

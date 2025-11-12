@@ -15,6 +15,10 @@ from state import rooms
 #####GLOBAL ROOM STORAGE (probably want to optimize later)
     #init  rooms
 
+import ssl
+
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+ssl_context.load_cert_chain(certfile="auth/ssl_cert/cert.pem", keyfile="auth/ssl_cert/key.pem")
 
 rooms["100000"] = GameRoom("100000") #this is default for testing
 
@@ -57,8 +61,8 @@ import websockets
 async def main():
     print("Server running on :8080")
 
-
-    async with websockets.serve(handler, "0.0.0.0", 8080):
+    # Starts WSS (secure) with ssl
+    async with websockets.serve(handler, "0.0.0.0", 8080, ssl=ssl_context):
         await asyncio.Future()  # run forever
 
 if __name__ == "__main__":

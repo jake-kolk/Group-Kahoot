@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { registerUser } from "../services/ApiCall";
+import { authProvider } from "../services/ApiCall";
+import { useRouter } from 'vue-router';
 
 const username = ref('');
 const email = ref('');
 const password = ref('');
 
+const auth = authProvider();
+const router = useRouter();
+
 function handleSignup() {
-    registerUser({username: username.value, email: email.value, password: password.value})
+    auth.register({username: username.value, email: email.value, password: password.value})
         .then(response => {
-            console.log("Signup successful:", response);
-            // Handle successful signup (e.g., redirect to login page)
+            console.log("Signup successful:", response); // <--- .data
+            router.push({path: `/question_sets/${auth.userid}` })
         })
         .catch(error => {
-            console.error("Signup failed:", error);
-            // Handle signup failure (e.g., show error message)
+            console.error("Signup failed:", error.response?.data || error.message);
         });
 }
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { createQuestionSet, fetchQuestionSet, updateQuestionSet, deleteQuestionSet, authKey } from "../services/ApiCall";
+import { createQuestionSet, fetchQuestionSet, updateQuestionSet, deleteQuestionSet, authProvider } from "../services/ApiCall";
 
 const questionSetId = defineProps<{
     id?: number;
@@ -14,7 +14,7 @@ const questionSet = ref({
 });
 
 function loadQuestionSet() {
-    const token = authKey().token;
+    const token = authProvider().token;
     if (questionSetId) {
         fetchQuestionSet(token, Number(questionSetId))
             .then((data) => {

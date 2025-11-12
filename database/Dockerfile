@@ -11,13 +11,13 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# We DO NOT copy the source code here.
-# It will be mounted from the host when running the container.
+# Copy source code 
+COPY . .
 
 EXPOSE 8000
 
 # Default command: run your server script
-CMD ["python", "main_rest_api.py"]
+CMD ["python3", "main_rest_api.py"]
 # --------------------------------
 # kahoot-db/Dockerfile
 FROM postgres:15

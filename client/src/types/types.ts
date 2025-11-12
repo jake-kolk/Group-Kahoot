@@ -13,3 +13,11 @@ export interface Question {
     correctOptionIndex: string;
     timeLimit: number;
 }
+
+export interface LoginResponse {
+    access_token: string,
+    refresh_token: string,
+    token_type: "bearer",
+    user_id: number,
+    success : boolean
+}

@@ -2,6 +2,7 @@ from sqlmodel import Field, create_engine, SQLModel, Session, Column, JSON, Rela
 from typing import Optional, List
 from dotenv import load_dotenv
 import os
+from pydantic import BaseModel
 
 class UserBase(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -11,15 +12,21 @@ class UserBase(SQLModel):
 class User(UserBase, table=True):
     hashed_password: str = Field(max_length=255)
 
+    def __init__(self, username: str, email: str, hashed_password: str, id: int):
+        self.username = username
+        self.email = email
+        self.hashed_password = hashed_password
+        self.id = id
+
 class UserCreate(UserBase):
     password: str
+
+
 
 class UserUpdate(UserBase):
     username: Optional[str] = None
     email: Optional[str] = None
     password: Optional[str] = None
-    admin: Optional[bool] = None
-
 
 class QuestionSet(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -54,3 +61,8 @@ SQLModel.metadata.create_all(engine)
 def get_session():
     with Session(engine) as session:
         yield session
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
