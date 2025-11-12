@@ -1,16 +1,13 @@
-<script setup>
+<script setup lang="ts">
     import { ref } from 'vue'
     
     const duration = ref(15*1000)
 
-    // function setQuestionTimeLimit(newDuration)
-    // {
-    //     duration = newDuration
-    // }
-    // function SetQuestionTimer()
-    // {
+    function setQuestionTimeLimit()
+    {
+        
+    }
 
-    // }
     
 </script>
 <template>

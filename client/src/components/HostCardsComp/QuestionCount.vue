@@ -1,12 +1,13 @@
-<script setup>
+<script setup lang="ts">
     import { ref } from 'vue'
     
-    const numQuestions = ref("30")
+    var numQuestions = ref("30")
 
     //Update count in DB
     function SetQuestionCount()
     {
-        numQuestions = "22"
+        //
+        console.log(numQuestions.value)
     }
 
 
@@ -18,7 +19,7 @@
         </div>
         <div class="card-body">
             <h5 class="card-title">Number of questions per game {{numQuestions}}</h5>
-            <input type="number" v-model.number="numQuestions" @change="numQuestions"> 
+            <input type="number" v-model.number="numQuestions" @change="SetQuestionCount"> 
             <button @click="SetQuestionCount">Set</button>
         </div>
     </div>

@@ -10,8 +10,11 @@
 <template>
     <h1>Welcome, Host</h1>
    
-    <qcCard></QcCard>
-    <qTimer></QTimer>
-    <qSet></QSet>
+
+    <qcCard></qcCard>
+    <qTimer></qTimer>
+    <qSet></qSet>
+    <button>Play</button>
+
     
 </template>

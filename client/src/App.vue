@@ -7,7 +7,7 @@ import type { Player } from './game/Player';
 import Game from './components/Game.vue';
 import { WS } from './services/WebSocket';
 import { toast } from 'vue3-toastify';
-import Host from "./components/Host.vue";
+import Host from './components/Host.vue';
 
 const currentScreen = ref('mainMenu');
 const player = ref();
