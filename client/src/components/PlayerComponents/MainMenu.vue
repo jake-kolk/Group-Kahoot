@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onUnmounted, ref } from 'vue';
-import { WS } from '../services/WebSocket';
-import { Player } from '../game/Player';
+import { WS } from '@/services/WebSocket';
+import { Player } from '@/game/Player';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
@@ -20,11 +20,11 @@ function handleJoin() {
 // confirmation from server
 WS.on('joined', (data: Record<string, any>) => {
   const player = new Player(name.value, data.id)
-  joinLobby(player);
+  joinLobby(player, data.room);
 });
 
-function joinLobby(player: Player) { 
-  vueEmit('join-lobby', player);
+function joinLobby(player: Player, room_id: string) { 
+  vueEmit('join-lobby', player, room_id);
 }
 
 onUnmounted(() => {

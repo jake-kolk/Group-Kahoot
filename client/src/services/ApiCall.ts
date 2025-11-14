@@ -5,6 +5,7 @@ import type { LoginResponse } from '../types/types';
 
 const API_URL = 'http://localhost:8000';
 
+
 export const authProvider = defineStore('authProvider', () => {
     const refresh_token = ref("");
     const access_token = ref("");
@@ -263,3 +264,18 @@ export const checkAuth = async () => {
         return false;
     }
 }
+
+export const getGameServerToken = async () =>{
+    try{
+        const response = await axios.get(`${API_URL}/auth/game_server`, {           
+            withCredentials: true // ensures cookies are sent
+        });
+        const token = response.data.auth_token;
+        return token;
+    }
+    catch (error){
+        console.log("Got error from getGameServerToken", error);
+    }
+}
+
+

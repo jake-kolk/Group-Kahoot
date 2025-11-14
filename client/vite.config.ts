@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { fileURLToPath, URL } from 'node:url'
 import vue from '@vitejs/plugin-vue'
 // IMPORTANT!!! if you want to use http, chnge the target below
 // https://vite.dev/config/
@@ -18,7 +19,9 @@ export default defineConfig({
     build: {
     sourcemap: true,
   },
+  
   plugins: [
+    /*
     {
       name: "http-logger",
       configureServer(server) {
@@ -36,7 +39,12 @@ export default defineConfig({
           next();
         });
       }
-    },
+    },*/
     vue()
   ],
+  resolve: {
+  alias: {
+    '@': fileURLToPath(new URL('./src', import.meta.url))
+  }
+}
 });

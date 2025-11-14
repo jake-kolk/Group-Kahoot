@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Player } from '../game/Player';
-import { WS } from '../services/WebSocket';
+import type { Player } from '@/game/Player';
+import { WS } from '@/services/WebSocket';
 const vueEmit = defineEmits(['leave-game', 'start-game']);
 
 const props = defineProps<{player: Player}>();
@@ -16,6 +16,11 @@ function startGame() {
 WS.on("game_started", () => {
     vueEmit('start-game');
 });
+
+WS.on('player_joined', (data: Record<string, any>) => {
+    console.log("Added player ", data.name)
+});
+
 </script>
 
 <template>

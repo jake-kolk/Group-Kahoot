@@ -2,19 +2,25 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { authProvider } from "../services/ApiCall";
+import { useRoute } from 'vue-router'
 
 const username = ref('');
 const password = ref('');
 
 const auth = authProvider();
 const router = useRouter();
+const route = useRoute()
 
 function handleLogin() {
     auth.login({username: username.value, password: password.value})
         .then(response => {
             console.log("Login successful:", response);
             auth.userid = response.user_id;
-            router.push({path: `/question_sets/${auth.userid}` })
+            if (route.query.redirect) {
+                router.push(route.query.redirect as string) // go to the page user wanted (sent as query: <destination>)
+        } else {
+            router.push('/host') // default page if no redirect
+        }
         })
         .catch(error => {
             console.error("Login failed:", error);

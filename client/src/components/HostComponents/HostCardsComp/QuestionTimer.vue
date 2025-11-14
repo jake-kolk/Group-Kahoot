@@ -1,17 +1,23 @@
 <script setup>
     import { ref } from 'vue'
     
-    const duration = ref(15*1000)
+    let duration = ref(15*1000)
 
-    // function setQuestionTimeLimit(newDuration)
-    // {
-    //     duration = newDuration
-    // }
-    // function SetQuestionTimer()
-    // {
+    function setQuestionTimeLimit()
+    {
+        duration = duration.value
+    }
 
-    // }
+    function getQuestionTimeLimit()
+    {
+        return duration.value;
+    }
     
+    defineExpose({
+    getQuestionTimeLimit,
+    setQuestionTimeLimit
+    })
+
 </script>
 <template>
     <div class="card m-4">
@@ -31,7 +37,6 @@
                 step="1000"
                 >
             </div>
-            <button @click="setQuestionTimeLimit">Set</button>
         </div>
     </div>
    

@@ -1,13 +1,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import MainMenu from './components/MainMenu.vue'
-import Lobby from './components/Lobby.vue';
 import type { Player } from './game/Player';
-import Game from './components/Game.vue';
 import { WS } from './services/WebSocket';
 import { toast } from 'vue3-toastify';
-import Host from "./components/Host.vue";
 
 const currentScreen = ref('mainMenu');
 const player = ref();

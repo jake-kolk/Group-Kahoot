@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends, HTTPException, status, APIRouter
 import auth
 from auth.auth_handler import authenticate_user, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_user, get_password_hash, create_refresh_token, check_token
-from auth.auth_schemas import Token, UserResponse
+from auth.auth_schemas import UserResponse
 
 from models import User, UserCreate, get_session
 from sqlmodel import Session
@@ -12,10 +12,13 @@ import random
 
 from models import LoginRequest
 from fastapi import Response, Request
+
+import websockets
+from fastapi import FastAPI, WebSocket
+import json
+
 router = APIRouter()
 
-#This is for looking up users to match tokens with sessions
-registered_users = dict()
 
 @router.post("/register", response_model=UserResponse)
 async def register_user(user: UserCreate, db: Session = Depends(get_session)):
@@ -113,4 +116,36 @@ def protected(request: Request):
         raise HTTPException(status_code=401, detail="Expired or invalid access token")
 
     return {"message": "You are authenticated!", "user_id": user_id}
+
+GAME_SERVER_URL = "ws://localhost:5173/ws/"
+
+@router.get("/game_server")
+async def game_server_auth(request: Request):
+    uri = GAME_SERVER_URL
+    access_token = request.cookies.get("access_token")
+    user_id = check_token(access_token)
+
+    if isinstance(user_id, HTTPException):
+        raise user_id
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Expired or invalid access token")
     
+    try:
+        async with websockets.connect(uri) as websocket:
+            await websocket.send(json.dumps({"type": "get_game_token", "user_id" : user_id}))
+            while True:
+                message = await websocket.recv()
+                try:
+                    data = json.loads(message)
+                except json.JSONDecodeError:
+                    print("Receved  invalid message from game server via ws")
+                    continue
+
+                # Access fields
+                if "auth_token" in data:
+                    token = data["auth_token"]
+                    return {"auth_token" : token}
+                else:
+                    print("No auth token in data receved from game server via ws")
+    except Exception as error:
+        print("[DEBUG] Failed to start web sockets with error ", error)

@@ -37,7 +37,8 @@ class WS {
 
     private static connect() {
         WS.webSocket = new WebSocket(WS.url);
-        console.log("initializing websocket...");
+        console.log("initializing websocket at", WS.url);
+
         WS.webSocket.onopen = WS.options.onopen ?? (() => console.log("Websocket open!"));
         WS.webSocket.onclose = (ev: CloseEvent) => {
             if (WS.options.onclose) WS.options.onclose(ev);
@@ -66,6 +67,7 @@ class WS {
     static removeListener(eventName: string) {
         WS.listeners.delete(eventName);
     }
+
 }
 
 export { WS };

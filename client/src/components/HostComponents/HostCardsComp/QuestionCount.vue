@@ -1,14 +1,23 @@
 <script setup>
     import { ref } from 'vue'
     
-    const numQuestions = ref("30")
+    let numQuestions = ref("30")
 
     //Update count in DB
     function SetQuestionCount()
     {
-        numQuestions = "22"
+        numQuestions = numQuestions.value;
     }
 
+    function getQuestionCount()
+    {
+        return numQuestions.value;
+    }
+
+    defineExpose({
+    getQuestionCount,
+    SetQuestionCount
+    })
 
 </script>
 <template>
@@ -17,9 +26,8 @@
             Question Count
         </div>
         <div class="card-body">
-            <h5 class="card-title">Number of questions per game {{numQuestions}}</h5>
+            <h5 class="card-title">Number of questions per game is {{numQuestions}}</h5>
             <input type="number" v-model.number="numQuestions" @change="numQuestions"> 
-            <button @click="SetQuestionCount">Set</button>
         </div>
     </div>
    

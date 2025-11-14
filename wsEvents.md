@@ -37,3 +37,5 @@ The types might be called something different!
   - `{"type":"player_left","id":player_id}`
 - game_end:  
   - `{"type":"game_end"}`
+
+## DB server sends

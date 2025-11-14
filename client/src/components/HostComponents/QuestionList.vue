@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { fetchAllQuestions, fetchQuestionSet, authProvider } from "../services/ApiCall";
-import type { Question } from "../types/types";
+import { fetchAllQuestions, fetchQuestionSet, authProvider } from "@/services/ApiCall";
+import type { Question } from "@/types/types";
 
 const { questionSetId } = defineProps<{ questionSetId: string }>();
 

@@ -40,6 +40,10 @@ def get_user(db: Session, email: str):
     db_user = db.exec(select(User).where(User.email == email)).first()
     return db_user
 
+def lookup_user(db: Session,  uid:int):
+    db_user = db.exec(select(User).where(User.id == uid)).first()
+    return db_user
+
 def authenticate_user(db: Session, email: str, password: str):
     user = get_user(db, email)
     if not user:

@@ -4,6 +4,10 @@ import json
 import logging
 from state import rooms
 import random
+from utils import generate_room_id
+import websockets
+import state
+
 #import requests
 
 class Session:
@@ -22,6 +26,10 @@ class Session:
         message = json.dumps(j)
         async with self._write_lock:
             await self.ws.send(message)
+class Host:
+    def __init__(self, session, token):
+        self.session = session
+        self.token = token
 
 class Player:
     def __init__(self, session, name, player_id):
@@ -30,22 +38,22 @@ class Player:
         self.id = player_id
         self.points = 0
 
-class GameRoom:
-
-    def __init__(self, code):
-        self.code = code
+class GameRoom:    
+    def __init__(self, question_set, time_limit, question_count, host):
+        self.room_number = str(generate_room_id())
         self.players = dict()
         self.next_player_id = 1
         self.current_question_id = -1
         self.answers_received = {}
         self.timer_task = None
         self.gameStarted = False
-        # self.questions = []
-        self.question_answer_window_seconds = 10 # Name kinda long if you think of something better please replace
+        self.question_answer_window_seconds = time_limit # Name kinda long if you think of something better please replace
         question = {"text": "What's 2+2?", "choices": ["1", "3", "4", "5"]}
         self.questions = [question.copy() for _ in range(10)]
+        self.num_questions = question_count
+        self.question_set_id = question_set
+        self.host = host
 
-        
     async def broadcast(self, j):
     # Use Session.send() so per-connection locking is preserved,
     # but run all sends concurrently so one slow client doesn't block others.
@@ -53,6 +61,7 @@ class GameRoom:
         *(p.sess.send(j) for p in self.players.values()),
         return_exceptions=True
         )
+        await self.host.session.send(j)
 
 
 
@@ -101,7 +110,7 @@ class GameRoom:
             await self.broadcast({"type":"player_left","id":player_id})
             # If player leaving results in empty GameRoom, end game
             if len(self.players) == 0: 
-                logging.info("Room num" + str(self.code)  + " ended due to 0 players")
+                logging.info("Room num" + str(self.room_number)  + " ended due to 0 players")
                 await self.end_game()
 
     def load_questions_from_db():
@@ -119,16 +128,17 @@ class GameRoom:
     async def end_game(self):
         self.gameStarted = False
         self.current_question_id = 0
-        if str(self.code) != "100000":  # We dont want to delete default room
-            rooms.pop(str(self.code), None) # Pops room from rooms, if room nonexistant does not raise error
+        if str(self.room_number) != "100000":  # We dont want to delete default room
+            rooms.pop(str(self.room_number), None) # Pops room from rooms, if room nonexistant does not raise error
         else:
             logging.info("end_game: default game end attempted!")
     
     async def start_game(self, session: Session, data):
-        roomCode = data.get("room")
+        auth = data.get("auth")
+        roomCode = state.hosts[auth]
 
         if str(roomCode) not in rooms:
-            logging.error("ERROR: handler: roomnum " + str(roomCode) + "NOT FOUND")
+            logging.error("ERROR: start_game: roomnum " + str(roomCode) + "not found")
             return
         
         self.current_question_id = 0
@@ -143,11 +153,12 @@ class GameRoom:
 
         if not hasattr(self, "game_task") or self.game_task.done():
             self.game_task = asyncio.create_task(self.run_game())
-            
+        else:
+            print("ln 171: hasattr(self, game_task) or self.game_task.done():") 
     async def start_question(self):
         question_id = self.current_question_id
         question = {"text":"What's 2+2?","choices":["1","3","4","5"]}
-        roomCode = self.code
+        roomCode = self.room_number
 
         if str(roomCode) not in rooms:
             logging.error("ERROR: handler: roomnum " + str(roomCode) + "NOT FOUND")
@@ -230,12 +241,7 @@ class GameRoom:
 
         # Question ended and leaderboards sent
         self.current_question_id += 1
-        
-  
-    async def create_room(self, session:Session, data):
-        while roomNum in rooms:
-            roomNum = random.randint(100000, 999999) #generate new room num if new room num is taken
-
+    
     async def run_game(self):
         # Start question
         while self.current_question_id < len(self.questions):
@@ -260,3 +266,4 @@ class GameRoom:
             # Repeat if questions are remaining
 
         await self.end_game()
+

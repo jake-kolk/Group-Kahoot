@@ -5,12 +5,16 @@ import './style.css'
 import App from './App.vue'
 import Login from './components/Login.vue'
 import Signup from './components/Signup.vue'
-import QuestionSetList from './components/QuestionSetList.vue'
-import QuestionSetEdit from './components/QuestionSetEdit.vue'
-import QuestionList from './components/QuestionList.vue'
-import QuestionEdit from './components/QuestionEdit.vue'
-import GamePage from './components/GamePage.vue'
-import Host from './components/Host.vue'
+
+import QuestionSetList from './components/HostComponents/QuestionSetList.vue'
+import QuestionSetEdit from './components/HostComponents/QuestionSetEdit.vue'
+import QuestionList from './components/HostComponents/QuestionList.vue'
+import QuestionEdit from './components/HostComponents/QuestionEdit.vue'
+
+import GamePage from './components/PlayerComponents/GamePage.vue'
+
+import HostPage from './components/HostComponents/HostPage.vue'
+import CreateGame from './components/HostComponents/CreateGame.vue'
 
 const router = createRouter({
     history: createWebHistory(),
@@ -22,7 +26,9 @@ const router = createRouter({
         {path: '/question_sets/:UserId/edit/:id', component: QuestionSetEdit, props: true},
         {path: '/questions/:userId/:questionSetId', component: QuestionList, props: true},
         {path: '/questions/:UserId/edit/:id', component: QuestionEdit, props: true},
-        {path: '/host', component: Host, props: false}
+
+        {path: '/play', component: GamePage},
+        {path: '/host', component: HostPage}
     ],
 })
 
